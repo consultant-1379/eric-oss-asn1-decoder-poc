@@ -1,0 +1,48 @@
+NGAP-PDU {
+   initiatingMessage {
+      procedureCode = id-InitialUEMessage
+      criticality = ignore
+      value (InitialUEMessage) {
+         protocolIEs [0] {
+            id = id-RAN-UE-NGAP-ID
+            criticality = reject
+            value (RAN-UE-NGAP-ID) = 6
+         }
+         protocolIEs [1] {
+            id = id-NAS-PDU
+            criticality = reject
+            value (NAS-PDU) = 7e004179000d0162f208f0ff000030100201202e02f0f0
+         }
+         protocolIEs [2] {
+            id = id-UserLocationInformation
+            criticality = reject
+            value (UserLocationInformation) {
+               userLocationInformationNR {
+                  nR_CGI {
+                     pLMNIdentity = 62f208
+                     nRCellIdentity = 0x00 0x0B 0x3C 0x00 0001xxxx
+                  }
+                  tAI {
+                     pLMNIdentity = 62f208
+                     tAC = 000005
+                  }
+               }
+            }
+         }
+         protocolIEs [3] {
+            id = id-RRCEstablishmentCause
+            criticality = ignore
+            value (RRCEstablishmentCause) = mo-Signalling
+         }
+         protocolIEs [4] {
+            id = id-FiveG-S-TMSI
+            criticality = reject
+            value (FiveG-S-TMSI) {
+               aMFSetID = 0x00 00xxxxxx
+               aMFPointer = 000000xx
+               fiveG_TMSI = 00000000
+            }
+         }
+      }
+   }
+}

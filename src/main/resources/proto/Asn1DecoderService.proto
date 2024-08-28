@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package com.ericsson.oss.apps.proto.asn1;
+
+service Asn1DecoderService {
+  rpc DecodeNRAsn1Events (NRAsn1EventRequest) returns (NRAsn1EventResponse);
+}
+
+message NRAsn1EventRequest {
+  repeated bytes encodedEvent = 1;
+}
+
+message NRAsn1EventResponse {
+  repeated NRAsn1Decoded decodedAsn1 = 1;
+}
+
+message NRAsn1Decoded {
+  string decodedEvent = 1;
+  NRAsn1ParsingStatus parsingStatus = 2;
+}
+
+enum NRAsn1ParsingStatus {
+  OK = 0;
+  GPB_DECODER_EXCEPTION = 1;
+  IO_EXCEPTION = 2;
+  INTERNAL_ERROR = 3;
+}

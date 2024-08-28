@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ ~ COPYRIGHT Ericsson 2022
+ ~
+ ~
+ ~
+ ~ The copyright to the computer program(s) herein is the property of
+ ~
+ ~ Ericsson Inc. The programs may be used and/or copied only with written
+ ~
+ ~ permission from Ericsson Inc. or in accordance with the terms and
+ ~
+ ~ conditions stipulated in the agreement/contract under which the
+ ~
+ ~ program(s) have been supplied.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.ericsson.oss.apps</groupId>
+    <artifactId>eric-oss-asn1-decoder-poc</artifactId>
+    <version>1.14.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <name>eric-oss-asn1-decoder-poc</name>
+
+    <scm>
+        <developerConnection>${ericsson.scm.url}</developerConnection>
+        <connection>${ericsson.scm.url}</connection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <!-- Quarkus properties -->
+        <compiler-plugin.version>3.12.1</compiler-plugin.version>
+        <maven.compiler.release>17</maven.compiler.release>
+        <maven.compiler.target>17</maven.compiler.target>
+        <quarkus.package.type>uber-jar</quarkus.package.type>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <quarkus.platform.artifact-id>quarkus-bom</quarkus.platform.artifact-id>
+        <quarkus.platform.group-id>io.quarkus.platform</quarkus.platform.group-id>
+        <quarkus.package.add-runner-suffix>false</quarkus.package.add-runner-suffix>
+        <quarkus.platform.version>3.8.1</quarkus.platform.version>
+        <skipITs>false</skipITs>
+        <surefire-plugin.version>3.2.5</surefire-plugin.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ericsson.scm.url>
+            scm:git:[fetch=]ssh://gerrit.ericsson.se:29418/OSS/com.ericsson.oss.apps/eric-oss-asn1-decoder-poc[push=]ssh://gerrit.ericsson.se:29418/OSS/com.ericsson.oss.apps/eric-oss-asn1-decoder-poc
+        </ericsson.scm.url>
+        <version.maven-sortpom-plugin>2.13.1</version.maven-sortpom-plugin>
+        <version.maven-scm-provider-gitexe>1.8.1</version.maven-scm-provider-gitexe>
+        <!-- Build Dependocoencies Begin -->
+        <version.license-maven-plugin>3.0</version.license-maven-plugin>
+        <version.sonar-maven-plugin>3.8.0.2131</version.sonar-maven-plugin>
+        <version.maven-dependency-plugin>3.6.0</version.maven-dependency-plugin>
+        <version.versions-maven-plugin>2.16.0</version.versions-maven-plugin>
+        <version.jacoco-maven.plugin>0.8.11</version.jacoco-maven.plugin>
+        <version.gpb-decoder>1.0.175</version.gpb-decoder>
+
+        <sonar.coverage.exclusions>**/api/**/*,**/model/**/*</sonar.coverage.exclusions>
+        <jacoco-maven-plugin.coveredratio.minimum>0.5</jacoco-maven-plugin.coveredratio.minimum>
+        <!-- Build Dependencies End -->
+
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>${quarkus.platform.artifact-id}</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-micrometer-registry-prometheus</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-arc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-resteasy-reactive</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-smallrye-health</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-logging-json</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- Ericsson Dependencies begin-->
+        <dependency>
+            <groupId>com.ericsson.oss.presentation.client.tracedecoder</groupId>
+            <artifactId>gpb-decoder-jar</artifactId>
+            <version>${version.gpb-decoder}</version>
+        </dependency>
+        <!-- Ericsson Dependencies end -->
+
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-grpc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.api.grpc/proto-google-common-protos -->
+        <dependency>
+            <groupId>com.google.api.grpc</groupId>
+            <artifactId>proto-google-common-protos</artifactId>
+            <version>2.36.0</version>
+        </dependency>
+
+
+        <!-- Test Dependencies begin -->
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-junit5-mockito</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.quarkus</groupId>
+            <artifactId>quarkus-jacoco</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ericsson.component.aia.mediation.parser</groupId>
+            <artifactId>handler</artifactId>
+            <version>3.1.11</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.ericsson.component.aia.mediation.parser</groupId>
+                    <artifactId>avro-schema-provider</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- Test Dependencies end -->
+
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>**/eric-oss-asn1-decoder-poc-openapi.zip</exclude>
+                </excludes>
+            </resource>
+            <resource>
+                <filtering>false</filtering>
+                <directory>${project.build.directory}/generated-resources</directory>
+            </resource>
+        </resources>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${version.license-maven-plugin}</version>
+                    <configuration>
+                        <header>license/copyright-2022.txt</header>
+                        <validHeaders>
+                            <validHeader>license/copyright-2020.txt</validHeader>
+                            <validHeader>license/copyright-2021.txt</validHeader>
+                            <validHeader>license/copyright-2022.txt</validHeader>
+                            <validHeader>license/copyright-2023.txt</validHeader>
+                            <validHeader>license/copyright-2024.txt</validHeader>
+                        </validHeaders>
+                        <excludes>
+                            <exclude>.bob/*</exclude>
+                            <exclude>.bob*/</exclude>
+                            <exclude>bob/*</exclude>
+                            <exclude>bob*/</exclude>
+                            <exclude>k8s-logs/*</exclude>
+                            <exclude>**/.helmignore</exclude>
+                            <exclude>**/*.html</exclude>
+                            <exclude>**/_helpers.tpl</exclude>
+                            <exclude>**/*.tgz</exclude>
+                            <exclude>**/VERSION*</exclude>
+                            <exclude>**/*.repo</exclude>
+                            <exclude>license/copyright*</exclude>
+                            <exclude>design-rule-check-report*</exclude>
+                            <exclude>helm-install-dry-run.log</exclude>
+                            <exclude>*artifact.properties</exclude>
+                            <exclude>**/*.txt</exclude>
+                            <exclude>**/custom_stages.yaml</exclude>
+                            <exclude>ci/scripts/update_cbos.sh</exclude>
+                            <exclude>**/*.Jenkinsfile</exclude>
+                            <exclude>**/*.adoc</exclude>
+                            <exclude>**/*.config</exclude>
+                            <exclude>**/rest2html*.zip</exclude>
+                            <exclude>settings.xml</exclude>
+                            <exclude>**/fossa/*</exclude>
+                            <exclude>ci-cd/*</exclude>
+                            <exclude>ci-cd*/</exclude>
+                            <exclude>**/config/</exclude>
+                            <exclude>generated/*</exclude>
+                            <exclude>generated*/</exclude>
+                            <exclude>dependencies/*</exclude>
+                            <exclude>dependencies*/</exclude>
+                        </excludes>
+                        <headerDefinitions>
+                            <headerDefinition>./license/javaHeaderDefinition.xml</headerDefinition>
+                            <headerDefinition>./license/xmlHeaderDefinition.xml</headerDefinition>
+                        </headerDefinitions>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.sonarsource.scanner.maven</groupId>
+                    <artifactId>sonar-maven-plugin</artifactId>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${version.maven-dependency-plugin}</version>
+                <executions>
+                    <execution>
+                        <id>download-desc</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.ericsson.oss.presentation.client.tracedecoder</groupId>
+                                    <artifactId>gpb-decoder-api</artifactId>
+                                    <version>${version.gpb-decoder}</version>
+                                    <type>jar</type>
+                                    <overWrite>true</overWrite>
+                                    <outputDirectory>${project.build.directory}/generated-resources/ile-descriptors</outputDirectory>
+                                    <includes>**/file-descriptors/*.desc</includes>
+                                    <fileMappers>
+                                        <org.codehaus.plexus.components.io.filemappers.RegExpFileMapper>
+                                            <pattern>^\Qfile-descriptors/\E</pattern>
+                                            <replacement>./</replacement>
+                                        </org.codehaus.plexus.components.io.filemappers.RegExpFileMapper>
+                                    </fileMappers>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>quarkus-maven-plugin</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>generate-code</goal>
+                        </goals>
+                        <configuration>
+                            <properties>
+                                <quarkus.grpc.codegen.proto-directory>${project.basedir}/src/main/resources/proto</quarkus.grpc.codegen.proto-directory>
+                            </properties>
+                        </configuration>
+
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler-plugin.version}</version>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-parameters</arg>
+                    </compilerArgs>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.30</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*_IT*.java</exclude>
+                    </excludes>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                        <quarkus.devservices.enabled>false</quarkus.devservices.enabled>
+                    </systemPropertyVariables>
+                    <additionalClasspathElements>
+                        <additionalClasspathElement>${project.build.directory}/generated-resources</additionalClasspathElement>
+                    </additionalClasspathElements>
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${surefire-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <!-- JaCoCo plugin for Java Code Coverage -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>${version.jacoco-maven.plugin}</version>
+                <configuration>
+                    <append>true</append>
+                    <excludes>
+                        <exclude>**/api/**/*</exclude>
+                        <exclude>**/proto/**/*</exclude>
+                        <exclude>**/models/*.*</exclude>
+                    </excludes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jacoco-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <phase>test</phase>
+                        <!-- JaCoCo uses a set of different counters to calculate coverage
+                                        metrics -->
+                        <!-- Check configuration used to specify rules on element types (BUNDLE,
+                                        PACKAGE, CLASS, SOURCEFILE or METHOD) with a list of limits. Each limit applies
+                                        to a certain counter (INSTRUCTION, LINE, BRANCH, COMPLEXITY, METHOD, CLASS)
+                                        and defines a minimum or maximum for the corresponding value (TOTALCOUNT,
+                                        COVEREDCOUNT, MISSEDCOUNT, COVEREDRATIO, MISSEDRATIO). A limit ratio may
+                                        optionally be declared as a percentage where 0.80 and 80% represent the same
+                                        value, the value must end with %. -->
+                        <configuration>
+                            <rules>
+                                <rule implementation="org.jacoco.maven.RuleConfiguration">
+                                    <element>BUNDLE</element>
+                                    <limits>
+                                        <limit implementation="org.jacoco.report.check.Limit">
+                                            <counter>INSTRUCTION</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>${jacoco-maven-plugin.coveredratio.minimum}</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                            <excludes>
+                                <exclude>**/api/**/*</exclude>
+                                <exclude>**/proto/**/*</exclude>
+                                <exclude>**/models/*.*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <exclClassLoaders>*QuarkusClassLoader</exclClassLoaders>
+                            <destFile>${project.build.directory}/jacoco-quarkus.exec</destFile>
+                            <append>true</append>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>agent-for-ut</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <exclClassLoaders>*QuarkusClassLoader</exclClassLoaders>
+                            <excludes>
+                                <exclude>**/api/**/*</exclude>
+                                <exclude>**/proto/**/*</exclude>
+                                <exclude>**/models/*.*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>agent-for-it</id>
+                        <goals>
+                            <goal>prepare-agent-integration</goal>
+                        </goals>
+                        <configuration>
+                            <exclClassLoaders>*QuarkusClassLoader</exclClassLoaders>
+                            <excludes>
+                                <exclude>**/api/**/*</exclude>
+                                <exclude>**/proto/**/*</exclude>
+                                <exclude>**/models/*.*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jacoco-site</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <phase>verify</phase>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/api/**/*</exclude>
+                                <exclude>**/proto/**/*</exclude>
+                                <exclude>**/models/*.*</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>Jar Tests Package</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>test-jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>snapshot</id>
+            <name>armseligic-snapshot</name>
+            <url>https://arm.seli.gic.ericsson.se/artifactory/proj-eric-oss-dev-local</url>
+        </snapshotRepository>
+        <repository>
+            <id>release</id>
+            <name>armseligic-release</name>
+            <url>https://arm.seli.gic.ericsson.se/artifactory/proj-eric-oss-release-local</url>
+        </repository>
+    </distributionManagement>
+
+</project>
